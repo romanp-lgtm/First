@@ -1,11 +1,14 @@
 {
   "name": "dummy",
-  "version": "1.2.0",
+  "version": "1.4.0",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Test author",
   "license": "ISC",
-  "description": ""
+  "description": "",
+  "dependencies": {
+    "lodash": "^4.17.21"
+  }
 }
