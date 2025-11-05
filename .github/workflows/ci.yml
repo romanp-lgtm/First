@@ -1,10 +1,13 @@
-name: CI
+name: CI (Disabled)
 
 on:
-  push:
-    branches: [main, develop]
-  pull_request:
-    branches: [main]
+  # CI workflow is disabled
+  # Uncomment the lines below to re-enable
+  # push:
+  #   branches: [main, develop]
+  # pull_request:
+  #   branches: [main]
+  workflow_dispatch: # Manual trigger only
 
 permissions:
   contents: read
