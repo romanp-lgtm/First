@@ -29,6 +29,7 @@ jobs:
         uses: jfrog/fly-action@v1
         with:
           url: https://romanpprod5.jfrog.io
+          package-managers: npm
 
       - name: Install dependencies
         run: npm ci
