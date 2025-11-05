@@ -24,11 +24,22 @@ jobs:
           node-version: "18"
           cache: "npm"
 
-      - name: Setup JFrog Fly
-        uses: jfrog/fly-action@v1
-        with:
-          url: https://romanpprod5.jfrog.io
-          package-managers: npm
+      - name: Configure npm for JFrog Fly
+        run: |
+          # Configure npm to use JFrog Fly registry
+          npm config set registry https://romanpprod5.jfrog.io/artifactory/api/npm/npm/
+
+          # Get OIDC token for authentication
+          OIDC_TOKEN=$(curl -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
+            "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=jfrog-github" | jq -r '.value')
+
+          # Exchange OIDC token for JFrog access token
+          JFROG_TOKEN=$(curl -X POST "https://romanpprod5.jfrog.io/access/api/v1/oidc/token" \
+            -H "Content-Type: application/json" \
+            -d "{\"grant_type\": \"urn:ietf:params:oauth:grant-type:token-exchange\", \"subject_token\": \"$OIDC_TOKEN\", \"subject_token_type\": \"urn:ietf:params:oauth:token-type:id_token\", \"provider_name\": \"github\"}" | jq -r '.access_token')
+
+          # Configure npm authentication
+          echo "//romanpprod5.jfrog.io/artifactory/api/npm/npm/:_authToken=$JFROG_TOKEN" >> ~/.npmrc
 
       - name: Install dependencies
         run: npm ci
