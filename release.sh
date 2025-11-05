@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Release script for creating tagged releases
+# Release script for creating tagged releases to JFrog Fly
 # Usage: ./release.sh [patch|minor|major|<version>]
 
 set -e
@@ -80,15 +80,16 @@ fi
 
 # Confirm release
 echo
-print_warning "About to create release:"
+print_warning "About to create release to JFrog Fly:"
 echo "  Version: $CURRENT_VERSION -> $NEW_VERSION"
 echo "  Tag: v$NEW_VERSION"
+echo "  Registry: https://romanpprod11.jfrog.io"
 echo "  This will:"
 echo "    1. Update package.json version"
 echo "    2. Commit the version change"
 echo "    3. Create and push a git tag"
 echo "    4. Trigger the release workflow"
-echo "    5. Publish to JFrog Fly"
+echo "    5. Publish to JFrog Fly registry"
 echo "    6. Create a GitHub release"
 echo
 
@@ -105,7 +106,7 @@ if [ "$VERSION_TYPE" != "patch" ] && [ "$VERSION_TYPE" != "minor" ] && [ "$VERSI
 fi
 
 # Commit version change
-git add package.json package-lock.json
+git add package.json package-lock.json 2>/dev/null || git add package.json
 git commit -m "chore: bump version to $NEW_VERSION"
 
 # Create and push tag
@@ -117,5 +118,12 @@ git push origin main
 git push origin $TAG_NAME
 
 print_success "Release $TAG_NAME created and pushed!"
-print_status "Check GitHub Actions for release progress: https://github.com/$(git config --get remote.origin.url | sed 's/.*github.com[:/]\([^.]*\).*/\1/')/actions"
-print_status "Package will be published to JFrog Fly automatically"
+print_status "🚀 Release workflow will now:"
+print_status "  ✅ Build and test the package"
+print_status "  ✅ Publish to JFrog Fly registry"
+print_status "  ✅ Create GitHub release with changelog"
+echo
+print_status "Monitor progress:"
+echo "  📊 GitHub Actions: https://github.com/$(git config --get remote.origin.url | sed 's/.*github.com[:/]\([^.]*\).*/\1/')/actions"
+echo "  📦 JFrog Fly: https://romanpprod11.jfrog.io"
+echo "  🏷️  Releases: https://github.com/$(git config --get remote.origin.url | sed 's/.*github.com[:/]\([^.]*\).*/\1/')/releases"

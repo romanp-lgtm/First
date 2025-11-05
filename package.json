@@ -13,7 +13,7 @@
   "license": "ISC",
   "description": "",
   "publishConfig": {
-    "registry": "https://romanpprod5.jfrog.io/artifactory/api/npm/npm/"
+    "registry": "https://romanpprod11.jfrog.io/artifactory/api/npm/npm/"
   },
   "dependencies": {
     "lodash": "^4.17.21"

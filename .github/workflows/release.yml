@@ -1,4 +1,4 @@
-name: Release
+name: Release to JFrog Fly
 
 on:
   push:
@@ -28,7 +28,10 @@ jobs:
       - name: Setup JFrog Fly
         uses: jfrog/fly-action@v1
         with:
-          url: https://romanpprod1.jfrog.io
+          url: https://romanpprod11.jfrog.io
+
+      - name: Install dependencies
+        run: npm ci
 
       - name: Extract version from tag
         id: version
@@ -44,8 +47,12 @@ jobs:
 
       - name: Build package (if needed)
         run: |
-          # Add any build steps here if your package needs compilation
-          # npm run build
+          if npm run build --silent 2>/dev/null; then
+            echo "Running build script..."
+            npm run build
+          else
+            echo "No build script found, skipping build step"
+          fi
 
       - name: Publish to JFrog Fly
         run: npm publish
@@ -73,14 +80,18 @@ jobs:
           tag_name: ${{ steps.version.outputs.tag }}
           name: Release ${{ steps.version.outputs.tag }}
           body: |
-            ## Changes in ${{ steps.version.outputs.tag }}
+            ## 🚀 Changes in ${{ steps.version.outputs.tag }}
 
             ${{ steps.changelog.outputs.changelog }}
 
-            ## Package Information
+            ## 📦 Package Information
             - **Package**: `@romanp-lgtm/first@${{ steps.version.outputs.version }}`
-            - **Registry**: JFrog Fly
+            - **Registry**: JFrog Fly (`https://romanpprod11.jfrog.io`)
             - **Install**: `npm install @romanp-lgtm/first@${{ steps.version.outputs.version }}`
+
+            ## 🔗 Links
+            - [JFrog Fly Registry](https://romanpprod11.jfrog.io)
+            - [Package Repository](https://github.com/romanp-lgtm/First)
           draft: false
           prerelease: false
 
